@@ -144,16 +144,31 @@
       return plan;
     }
 
-    gifts.forEach(function (g, index) {
-      if (index > 0) {
-        plan.updates[g.key] = 0;
-      } else if (g.quantity !== 1) {
-        plan.updates[g.key] = 1;
-      } else if (g.final_line_price > 0) {
-        plan.updates[g.key] = 0;
-        markGiftOff();
-      }
+    // Keep the gift line that is free. Shopify splits a gift with quantity 2+
+    // into a $0 line and a full-price line, so "the first line" isn't safe.
+    var keep = gifts.slice().sort(function (a, b) {
+      return (a.final_line_price / a.quantity) - (b.final_line_price / b.quantity);
+    })[0];
+
+    gifts.forEach(function (g) {
+      if (g !== keep) plan.updates[g.key] = 0;
     });
+
+    if (gifts.length > 1) {
+      // Re-check prices after the extra lines are gone.
+      return plan;
+    }
+
+    // Remember this size so it comes back if the cart is emptied and refilled.
+    store(sizeKey, keep.variant_id);
+
+    if (keep.quantity !== 1) {
+      plan.updates[keep.key] = 1;
+    } else if (keep.final_line_price > 0) {
+      // One gift and it still costs money: no discount is making it free.
+      plan.updates[keep.key] = 0;
+      markGiftOff();
+    }
     return plan;
   }
 

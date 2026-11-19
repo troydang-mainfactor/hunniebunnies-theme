@@ -9,7 +9,7 @@
 <div class="cart__item free-gift-line" data-key="{{ item.key }}" data-free-gift-line>
   <div class="cart__image">
     {%- if item.image != blank -%}
-      <div class="image-wrap">
+      <div class="free-gift-line__image">
         {{ item.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: settings.free_gift_heading, width: 120 }}
       </div>
     {%- endif -%}
