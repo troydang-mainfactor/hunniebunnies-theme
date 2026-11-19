@@ -179,9 +179,15 @@
       .then(function () { return reconcile(); })
       .then(rebuildCart)
       .catch(function (err) {
+        // The cart didn't change, so keep this picker on screen with the message.
         if (box) box.classList.remove('is-loading');
-        showMessage(box, (err && err.status === 422) ? config.soldOutText : config.errorText);
-        rebuildCart();
+        if (err && err.status === 422) {
+          button.disabled = true;
+          button.setAttribute('aria-disabled', 'true');
+          showMessage(box, config.soldOutText);
+        } else {
+          showMessage(box, config.errorText);
+        }
       });
   });
 
@@ -203,13 +209,18 @@
       items: [{ id: newId, quantity: 1, properties: { _free_gift: '1' } }]
     })
       .then(function () { return request('cart/change.js', { id: oldKey, quantity: 0 }); })
+      .then(function () { return reconcile(); })
+      .then(rebuildCart)
       .catch(function (err) {
+        // New size couldn't be added: keep the old one and say why.
         if (line) line.classList.remove('is-loading');
         select.value = select.dataset.current;
+        var option = select.querySelector('option[value="' + newId + '"]');
+        if (err && err.status === 422 && option) option.disabled = true;
         showMessage(line, (err && err.status === 422) ? config.soldOutText : config.errorText);
-      })
-      .then(function () { return reconcile(); })
-      .then(rebuildCart);
+        // In case the old size was already removed, put the cart right.
+        reconcile();
+      });
   });
 
   // Block checkout while a size still needs choosing.
