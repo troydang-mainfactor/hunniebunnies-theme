@@ -1,5 +1,5 @@
 {%- comment -%}
-  Free gift size picker, shown inside .cart__items (drawer and cart page).
+  Free gift size picker, shown at the top of .cart__items (drawer and cart page).
 
   Shown only when:
   - the gift is enabled and a gift product is chosen,
@@ -33,6 +33,7 @@
   <div class="free-gift"
     data-free-gift-picker
     {% if settings.free_gift_require_size %}data-free-gift-pending{% endif %}>
+    {%- comment -%} Customers choose from the dropdown; free-gift.js adds that size at once. {%- endcomment -%}
     <div class="free-gift__image">
       {%- if fg_product.featured_image != blank -%}
         {{ fg_product.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: settings.free_gift_heading, width: 120 }}
@@ -46,16 +47,14 @@
       {%- if settings.free_gift_prompt != blank -%}
         <p class="free-gift__prompt">{{ settings.free_gift_prompt | escape }}</p>
       {%- endif -%}
-      <div class="free-gift__sizes" role="group" aria-label="{{ settings.free_gift_heading | escape }}: choose a size">
+      <select class="free-gift-line__select" data-free-gift-select aria-label="{{ settings.free_gift_heading | escape }}: size">
+        <option value="" selected disabled>Select size</option>
         {%- for variant in fg_product.variants -%}
-          <button type="button"
-            class="free-gift__size"
-            data-free-gift-add="{{ variant.id }}"
-            {% unless variant.available %}disabled aria-disabled="true"{% endunless %}>
-            {{- variant.title | escape -}}
-          </button>
+          <option value="{{ variant.id }}" {% unless variant.available %}disabled{% endunless %}>
+            {{- variant.title | escape }}{% unless variant.available %} (sold out){% endunless -%}
+          </option>
         {%- endfor -%}
-      </div>
+      </select>
       <p class="free-gift__error" data-free-gift-message role="alert" hidden></p>
     </div>
   </div>

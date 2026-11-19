@@ -16,10 +16,19 @@
     <form action="{{ routes.cart_url }}" method="post" novalidate data-location="page" id="CartPageForm">
       <div class="cart__page">
         <div data-products class="cart__page-col">
-          {% for item in cart.items %}
-            {%- render 'cart-item', product: item, sizes: '150px', -%}
-          {%- endfor -%}
+          {%- comment -%} Free gift first: size picker, or the gift line once a size is chosen. {%- endcomment -%}
           {%- render 'free-gift-picker' -%}
+          {%- assign fg_id = settings.free_gift_product.id | default: 0 -%}
+          {%- for item in cart.items -%}
+          {%- if item.product_id == fg_id -%}
+          {%- render 'cart-item', product: item, sizes: '150px', -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {%- for item in cart.items -%}
+          {%- unless item.product_id == fg_id -%}
+          {%- render 'cart-item', product: item, sizes: '150px', -%}
+          {%- endunless -%}
+          {%- endfor -%}
         </div>
         <div class="cart__page-col">
           {% if settings.cart_notes_enable %}
