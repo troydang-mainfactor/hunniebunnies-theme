@@ -79,6 +79,16 @@
 
   {{ content_for_header }}
 
+  {%- comment -%} Free gift: its product page is never shown, and Buy it now is hidden while the gift is on. {%- endcomment -%}
+  {%- if template.name == 'product' and settings.free_gift_product != blank and product.id == settings.free_gift_product.id -%}
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="refresh" content="0; url={{ routes.root_url }}">
+    <script>window.location.replace({{ routes.root_url | json }});</script>
+  {%- endif -%}
+  {%- if settings.free_gift_enable and settings.free_gift_hide_buy_now -%}
+    <style>.shopify-payment-button, .shopify-payment-button__button { display: none !important; }</style>
+  {%- endif -%}
+
   <script src="{{ 'vendor-scripts-v11.js' | asset_url | split: '?' | first }}" defer="defer"></script>
 
   {%- if shop.enabled_currencies.size > 1 -%}
@@ -139,5 +149,6 @@
   </template>
     <script> (function(){ var s = document.createElement('script'); var h = document.querySelector('head') || document.body; s.src = 'https://acsbapp.com/apps/app/dist/js/app.js'; s.async = true; s.onload = function(){ acsbJS.init({ statementLink : '', footerHtml : '', hideMobile : false, hideTrigger : true, disableBgProcess : false, language : 'en', position : 'left', leadColor : '#000000', triggerColor : '#000000', triggerRadius : '50%', triggerPositionX : 'right', triggerPositionY : 'bottom', triggerIcon : 'people', triggerSize : 'medium', triggerOffsetX : 20, triggerOffsetY : 20, mobile : { triggerSize : 'small', triggerPositionX : 'right', triggerPositionY : 'bottom', triggerOffsetX : 10, triggerOffsetY : 10, triggerRadius : '50%' } }); }; h.appendChild(s); })(); </script>
 
+  {%- render 'free-gift-config' -%}
 </body>
 </html>

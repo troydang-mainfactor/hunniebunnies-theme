@@ -1,0 +1,50 @@
+{%- comment -%}
+  The free gift's cart line. No link to the product, no quantity buttons and
+  no remove link: the customer can only change the size.
+
+  Arguments
+  - item: the gift's line item
+{%- endcomment -%}
+{%- assign fg_product = item.product -%}
+<div class="cart__item free-gift-line" data-key="{{ item.key }}" data-free-gift-line>
+  <div class="cart__image">
+    {%- if item.image != blank -%}
+      <div class="image-wrap">
+        {{ item.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: settings.free_gift_heading, width: 120 }}
+      </div>
+    {%- endif -%}
+  </div>
+  <div class="cart__item-details">
+    <div class="cart__item-title">
+      <span class="cart__item-name">{{ settings.free_gift_heading | default: item.product.title | escape }}</span>
+      {%- unless fg_product.has_only_default_variant -%}
+        <label class="free-gift-line__label" for="FreeGiftSize-{{ item.key | handle }}">Size</label>
+        <select id="FreeGiftSize-{{ item.key | handle }}"
+          class="free-gift-line__select"
+          data-free-gift-swap
+          data-key="{{ item.key }}"
+          data-current="{{ item.variant_id }}">
+          {%- for variant in fg_product.variants -%}
+            <option value="{{ variant.id }}"
+              {% if variant.id == item.variant_id %}selected{% elsif variant.available == false %}disabled{% endif %}>
+              {{- variant.title | escape }}{% if variant.available == false and variant.id != item.variant_id %} (sold out){% endif -%}
+            </option>
+          {%- endfor -%}
+        </select>
+      {%- endunless -%}
+      <p class="free-gift__error" data-free-gift-message role="alert" hidden></p>
+    </div>
+    <div class="cart__item-sub">
+      <div class="free-gift-line__qty">Qty 1</div>
+      <div class="cart__item-price-col text-right">
+        {%- if item.final_line_price == 0 -%}
+          <small class="cart__price cart__price--strikethrough">{{ item.original_line_price | money }}</small>
+          <span class="cart__price free-gift__badge">FREE</span>
+        {%- else -%}
+          {%- comment -%} The discount isn't active: free-gift.js removes this line. {%- endcomment -%}
+          <span class="cart__price">{{ item.final_line_price | money }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>

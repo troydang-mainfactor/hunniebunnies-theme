@@ -1,3 +1,7 @@
+{%- comment -%} Free gift lines get their own markup: no link, no quantity, size picker only. {%- endcomment -%}
+{%- if settings.free_gift_product != blank and product.product_id == settings.free_gift_product.id -%}
+  {%- render 'cart-item-gift', item: product -%}
+{%- else -%}
 <div class="cart__item" data-key="{{ product.key }}">
   <div class="cart__image">
     {% if product.image != blank %}
@@ -121,3 +125,4 @@
     </div>
   </div>
 </div>
+{%- endif -%}

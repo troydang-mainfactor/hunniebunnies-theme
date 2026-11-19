@@ -1,0 +1,66 @@
+{%- comment -%}
+  Settings and script for the free gift. Always rendered when a gift product is
+  chosen, even with the gift turned off, so free-gift.js can remove any gift
+  lines left in a cart from before it was turned off.
+{%- endcomment -%}
+{%- if settings.free_gift_product != blank -%}
+  <script type="application/json" id="FreeGiftConfig">
+    {
+      "enabled": {{ settings.free_gift_enable | json }},
+      "productId": {{ settings.free_gift_product.id | json }},
+      "requireSize": {{ settings.free_gift_require_size | json }},
+      "requiredText": {{ settings.free_gift_required | default: 'Choose a size for your free gift to continue.' | json }},
+      "soldOutText": "That size just sold out. Please pick another.",
+      "errorText": "Something went wrong. Please try again."
+    }
+  </script>
+  <script src="{{ 'free-gift.js' | asset_url }}" defer></script>
+  <style>
+    .free-gift {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px dashed currentColor;
+      border-radius: 8px;
+    }
+    .free-gift--attention { outline: 2px solid {{ settings.color_savings_text }}; outline-offset: 2px; }
+    .free-gift__image { flex: 0 0 70px; }
+    .free-gift__image img { display: block; width: 70px; height: auto; border-radius: 4px; }
+    .free-gift__body { flex: 1 1 auto; min-width: 0; }
+    .free-gift__title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-weight: 700; text-transform: uppercase; }
+    .free-gift__badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: {{ settings.color_button }};
+      color: {{ settings.color_button_text }};
+      font-size: 0.75em;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .free-gift__prompt { margin: 6px 0 10px; font-size: 0.9em; }
+    .free-gift__sizes { display: flex; flex-wrap: wrap; gap: 6px; }
+    .free-gift__size {
+      min-width: 44px;
+      min-height: 36px;
+      padding: 4px 10px;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      font-size: 0.85em;
+      cursor: pointer;
+    }
+    .free-gift__size:hover:not([disabled]) { background: {{ settings.color_button }}; border-color: {{ settings.color_button }}; color: {{ settings.color_button_text }}; }
+    .free-gift__size[disabled] { opacity: 0.35; text-decoration: line-through; cursor: not-allowed; }
+    .free-gift.is-loading, .free-gift-line.is-loading { opacity: 0.5; pointer-events: none; }
+    .free-gift__error { margin: 8px 0 0; color: {{ settings.color_savings_text }}; font-size: 0.85em; }
+    .free-gift-line__label { display: block; margin: 6px 0 2px; font-size: 0.85em; }
+    .free-gift-line__select { max-width: 140px; padding: 4px 28px 4px 8px; color: #000; }
+    .free-gift-line__qty { font-size: 0.85em; opacity: 0.8; }
+    .free-gift-off [data-free-gift-picker] { display: none; }
+  </style>
+{%- endif -%}

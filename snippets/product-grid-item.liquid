@@ -1,3 +1,5 @@
+{%- comment -%} Never list the free gift product. {%- endcomment -%}
+{%- unless settings.free_gift_product != blank and product.id == settings.free_gift_product.id -%}
 {% comment %}
 Arguments
 - product: product object
@@ -361,3 +363,4 @@ Arguments
     {%- render 'quick-shop-modal', product: product -%}
   {%- endif -%}
 </div>
+{%- endunless -%}

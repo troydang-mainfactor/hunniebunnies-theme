@@ -16,6 +16,7 @@
   {% for item in cart.items %}
     {%- render 'cart-item', product: item, sizes: '100px', -%}
   {% endfor %}
+  {%- render 'free-gift-picker' -%}
 </div>
 <div class="cart__discounts cart__item-sub cart__item-row{% if cart.cart_level_discount_applications == blank %} hide{% endif %}">
   <div>{{ 'cart.general.discounts' | t }}</div>

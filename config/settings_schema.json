@@ -1028,5 +1028,57 @@
         "label": "t:settings_schema.extras.settings.disable_animations.label"
       }
     ]
+  },
+  {
+    "name": "Free gift",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Adds one free gift (e.g. a mystery tee) to every order. Customers pick a size in the cart; they can't change the quantity, remove it, or open its product page. The price is only $0 when the matching automatic discount is active in Shopify: if it isn't, the gift is removed from the cart automatically."
+      },
+      {
+        "type": "checkbox",
+        "id": "free_gift_enable",
+        "label": "Enable free gift",
+        "default": false
+      },
+      {
+        "type": "product",
+        "id": "free_gift_product",
+        "label": "Gift product",
+        "info": "Use a product made only for this gift, with one variant per size."
+      },
+      {
+        "type": "text",
+        "id": "free_gift_heading",
+        "label": "Heading",
+        "default": "Free mystery tee"
+      },
+      {
+        "type": "text",
+        "id": "free_gift_prompt",
+        "label": "Size prompt",
+        "default": "Pick your size. It's on us."
+      },
+      {
+        "type": "text",
+        "id": "free_gift_required",
+        "label": "Message when checkout is blocked",
+        "default": "Choose a size for your free tee to continue."
+      },
+      {
+        "type": "checkbox",
+        "id": "free_gift_require_size",
+        "label": "Require a size before checkout",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "free_gift_hide_buy_now",
+        "label": "Hide \"Buy it now\" buttons while the gift is on",
+        "info": "Buy it now skips the cart, so those orders would not get the gift.",
+        "default": true
+      }
+    ]
   }
 ]

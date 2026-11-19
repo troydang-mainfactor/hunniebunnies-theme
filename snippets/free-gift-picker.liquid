@@ -1,0 +1,62 @@
+{%- comment -%}
+  Free gift size picker, shown inside .cart__items (drawer and cart page).
+
+  Shown only when:
+  - the gift is enabled and a gift product is chosen,
+  - the cart has at least one item that isn't the gift,
+  - the cart doesn't already have the gift,
+  - at least one gift size is in stock,
+  - this browser hasn't found the gift discount missing (free-gift.js sets
+    the "free-gift-off" class on <html> when that happens).
+
+  data-free-gift-pending tells free-gift.js to block checkout until a size is picked.
+{%- endcomment -%}
+{%- liquid
+  assign fg_product = settings.free_gift_product
+  assign fg_show = false
+  if settings.free_gift_enable and fg_product != blank and fg_product.available
+    assign fg_paid = 0
+    assign fg_in_cart = false
+    for item in cart.items
+      if item.product_id == fg_product.id
+        assign fg_in_cart = true
+      else
+        assign fg_paid = fg_paid | plus: item.quantity
+      endif
+    endfor
+    if fg_paid > 0 and fg_in_cart == false
+      assign fg_show = true
+    endif
+  endif
+-%}
+{%- if fg_show -%}
+  <div class="free-gift"
+    data-free-gift-picker
+    {% if settings.free_gift_require_size %}data-free-gift-pending{% endif %}>
+    <div class="free-gift__image">
+      {%- if fg_product.featured_image != blank -%}
+        {{ fg_product.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', alt: settings.free_gift_heading, width: 120 }}
+      {%- endif -%}
+    </div>
+    <div class="free-gift__body">
+      <div class="free-gift__title">
+        <span>{{ settings.free_gift_heading | escape }}</span>
+        <span class="free-gift__badge">FREE</span>
+      </div>
+      {%- if settings.free_gift_prompt != blank -%}
+        <p class="free-gift__prompt">{{ settings.free_gift_prompt | escape }}</p>
+      {%- endif -%}
+      <div class="free-gift__sizes" role="group" aria-label="{{ settings.free_gift_heading | escape }}: choose a size">
+        {%- for variant in fg_product.variants -%}
+          <button type="button"
+            class="free-gift__size"
+            data-free-gift-add="{{ variant.id }}"
+            {% unless variant.available %}disabled aria-disabled="true"{% endunless %}>
+            {{- variant.title | escape -}}
+          </button>
+        {%- endfor -%}
+      </div>
+      <p class="free-gift__error" data-free-gift-message role="alert" hidden></p>
+    </div>
+  </div>
+{%- endif -%}
